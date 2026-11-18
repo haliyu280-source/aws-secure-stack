@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListThisBucketOnly",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::secure-stack-assets-568402999293"
+    },
+    {
+      "Sid": "ReadObjectsInThisBucketOnly",
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::secure-stack-assets-568402999293/*"
+    }
+  ]
+}
