@@ -13,3 +13,14 @@ variable "my_ip" {
     error_message = "my_ip must be a single IP address ending in /32."
   }
 }
+
+variable "key_name" {
+  description = "Existing EC2 key pair for SSH"
+  type        = string
+  default     = "secure-stack-key"
+}
+
+variable "alert_email" {
+  description = "Email address that receives CloudWatch alarm notifications"
+  type        = string
+}
