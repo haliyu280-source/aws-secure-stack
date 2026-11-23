@@ -1,0 +1,61 @@
+name: Infrastructure Security Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform format and validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hashicorp/setup-terraform@v3
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+      - name: Init without a backend
+        run: terraform init -backend=false
+      - name: Validate
+        run: terraform validate
+
+  misconfig:
+    name: Trivy misconfiguration scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Scan Terraform
+        run: |
+          docker run --rm -v "$PWD:/src" aquasec/trivy config \
+            --exit-code 1 --severity HIGH,CRITICAL \
+            --ignorefile /src/.trivyignore.yaml /src/terraform
+
+  secrets:
+    name: Secret scan (full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Scan every commit
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/repo" \
+            zricethezav/gitleaks:latest git /repo -v
+
+  iam-policies:
+    name: Overreach IAM policy scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: haliyu280-source/overreach
+          path: overreach-tool
+      - name: Scan IAM permission policies
+        run: python3 overreach-tool/reader.py iam/web-server-s3-read.json iam/cloudwatch-agent-policy.json
