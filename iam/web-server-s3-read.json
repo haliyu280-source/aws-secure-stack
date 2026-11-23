@@ -5,13 +5,13 @@
       "Sid": "ListThisBucketOnly",
       "Effect": "Allow",
       "Action": "s3:ListBucket",
-      "Resource": "arn:aws:s3:::secure-stack-assets-568402999293"
+      "Resource": "arn:aws:s3:::secure-stack-assets-ACCOUNT_ID"
     },
     {
       "Sid": "ReadObjectsInThisBucketOnly",
       "Effect": "Allow",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::secure-stack-assets-568402999293/*"
+      "Resource": "arn:aws:s3:::secure-stack-assets-ACCOUNT_ID/*"
     }
   ]
 }
