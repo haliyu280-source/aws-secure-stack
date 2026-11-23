@@ -1,0 +1,21 @@
+# Accepted risks for this lab. Each entry is a deliberate decision, not a silenced alert.
+misconfigurations:
+  - id: AWS-0053
+    paths: ["alb.tf"]
+    statement: "Public website: the load balancer must be internet-facing by design."
+
+  - id: AWS-0054
+    paths: ["alb.tf"]
+    statement: "Lab has no domain, so no TLS certificate. Production fix: HTTPS listener with an ACM certificate and an HTTP-to-HTTPS redirect."
+
+  - id: AWS-0095
+    paths: ["monitoring.tf"]
+    statement: "Topic carries alarm notifications only. The AWS-managed SNS key breaks CloudWatch alarm delivery; a customer-managed key is the production fix."
+
+  - id: AWS-0132
+    paths: ["s3.tf"]
+    statement: "Bucket is encrypted with SSE-S3 and holds a non-sensitive web page. Customer-managed KMS keys are reserved for sensitive data."
+
+  - id: AWS-0104
+    paths: ["security.tf"]
+    statement: "Servers need outbound HTTP/HTTPS for package updates, S3 and CloudWatch. Restricted to ports 80 and 443. Production fix: VPC endpoints and a private package mirror."
