@@ -116,4 +116,10 @@ config/             CloudWatch agent config and server bootstrap from the manual
 
 ## What I learned
 
-<!-- Written after the final checkpoint -->
+- **What makes a subnet public is its route table, not its name.** A subnet only reaches the internet if its route table sends `0.0.0.0/0` to an internet gateway.
+- **Security groups can reference each other.** Allowing web traffic only from the load balancer's security group, instead of from `0.0.0.0/0`, means nobody can bypass the load balancer and hit a server directly.
+- **Roles beat keys.** The servers read from S3 and ship logs without a single stored credential. I also found and removed an old, forgotten access key on my own laptop while setting this up.
+- **Most of my debugging came down to state I couldn't see.** Empty shell variables, expired credentials sitting in environment variables and overriding a fresh login, and an SSH timeout caused by my home IP changing. Checking the first error, not the last, saved the most time.
+- **Infrastructure as code changes how you fix things.** With Terraform, I replaced a server with one command while the site stayed up, and caught a change someone made by hand in the console (drift) on the next plan.
+- **Terraform state is sensitive.** Mine contained my account ID, every resource ARN and the full server bootstrap script. It never goes in Git.
+- **A scanner finding isn't automatically a bug.** I fixed some findings and accepted others with a written reason. The most useful lesson: the obvious fix for the unencrypted SNS topic, the AWS-managed key, would have silently broken my alarms.
